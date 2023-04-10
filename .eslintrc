@@ -20,7 +20,7 @@
       "version": "detect"
     }
   },
-  "ignorePatterns": ["webpack.config.js"],
+  "ignorePatterns": ["webpack.config.js", "custom.d.ts"],
   "rules": {
     "import/no-extraneous-dependencies": "off",
     "import/no-named-as-default": "off",

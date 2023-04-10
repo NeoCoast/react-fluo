@@ -1,1 +1,5 @@
+package-lock.json
 node_modules
+
+# Ignore DS_stores
+**/.DS_Store

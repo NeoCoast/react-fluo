@@ -1,25 +1,26 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
+import HighlightOptions from './highlightOptions';
 import Highlight from '../interfaces/highlight';
+
 import styleToString from '../helpers/styleToString';
+import getHighlightPosition, { Coord } from '../helpers/getHighlightPosition';
+import createHighlight, { HandleOverlap } from '../helpers/createHighlight';
 
 import '../assets/styles/highlightableText.scss';
-
-export enum HandleOverlap {
-  Merge,
-  Delete,
-  Error,
-}
 
 export interface HighlatableTextProps {
   id: string,
   text: string,
   highlights: Highlight[],
   setHighlights: (val: Highlight[]) => void,
-  style: React.CSSProperties,
-  highlightOptions: React.CSSProperties[],
-  highlightable: boolean,
+  highlightable?: boolean,
+  style?: React.CSSProperties,
   handleOverlaps: HandleOverlap,
+  highlightOptions: React.CSSProperties[],
+  optionsTitle?: string,
+  optionsStyle?: React.CSSProperties,
+  closeIcon?: string,
   errors?: string[],
   setErrors?: (val: string[]) => void,
 }
@@ -29,14 +30,22 @@ const HighlatableText = ({
   text,
   highlights,
   setHighlights,
-  style,
-  highlightOptions,
-  handleOverlaps,
   highlightable,
+  style,
+  handleOverlaps,
+  highlightOptions,
+  optionsTitle,
+  optionsStyle,
+  closeIcon,
   errors,
   setErrors,
 }: HighlatableTextProps) => {
+  const [options, setOptions] = useState<boolean>(false);
+  const [position, setPosition] = useState<Coord>({ x:0, y: 0 });
+  const [selectedHighlight, setSelectedHighlight] = useState<Highlight>();
+
   const drawHighlight = (
+    spanId: number,
     start:number,
     end:number,
     highlightStyle: string,
@@ -48,7 +57,7 @@ const HighlatableText = ({
       const modStart = start + lenghtDifference;
       const modEnd = end + lenghtDifference;
       const modstr = `${str.substr(0, modStart)
-      }<span style="${highlightStyle}">${
+      }<span id="${spanId}" style="${`${highlightStyle}`}">${
         str.substr(modStart, modEnd - modStart + 1)
       }</span>${
         str.substr(modEnd + 1)}`;
@@ -66,6 +75,7 @@ const HighlatableText = ({
       highlights.sort((prev, next) => prev.start - next.start).forEach(
         (highlight) => {
           lenghtDifference += drawHighlight(
+            highlight.id,
             highlight.start,
             highlight.end,
             highlight.style,
@@ -76,66 +86,26 @@ const HighlatableText = ({
     }
   }, [highlights]);
 
-  const overlapingHighlight = (highlight: Highlight) => highlights.filter(
-    (curr) => highlight.start <= curr.end && highlight.end >= curr.start,
-  );
-
-  const nonOverlapingHighlight = (highlight: Highlight) => highlights.filter(
-    (curr) => !(highlight.start <= curr.end && highlight.end >= curr.start),
-  );
-
-  const mergeHighlights = (overlaps: Highlight[]) => {
-    const starts = overlaps.map((overlap) => overlap.start);
-    const ends = overlaps.map((overlap) => overlap.end);
-    const newhighlight:Highlight = {
-      start: Math.min(...starts),
-      end: Math.max(...ends),
-      selection: text.substring(Math.min(...starts), Math.max(...ends)),
-      style: 'background: yellow;',
-    };
-    
-    setHighlights([...nonOverlapingHighlight(newhighlight), newhighlight]);
-  };
-
-  const overlapHandler = (newhighlight: Highlight, overlaps: Highlight[]) => {
-    switch (handleOverlaps) {
-      case HandleOverlap.Merge:
-        mergeHighlights([...overlaps, newhighlight]);
-        break;
-      case HandleOverlap.Delete:
-        setHighlights(nonOverlapingHighlight(newhighlight));
-        break;
-      case HandleOverlap.Error:
-        if (errors && setErrors) {
-          setErrors([...errors, 'Highlights overlap']);
-        }
-        break;
-      default:
-        alert('Highlights overlap');
+  const openOptions = (open: boolean) => {
+    const coords = getHighlightPosition(false);
+    if (coords && open) {
+      setPosition(coords);
+      setOptions(true);
     }
   };
 
-  const mouseOverHandle = () => {
+  const clickHandler = () => {
     const selection = window.getSelection();
-    
     if (selection) {
       const fst = selection.anchorOffset;
       const snd = selection.focusOffset;
-      if (highlightable && fst >= 0 && snd >= 0) {
+      if (fst >= 0 && snd >= 0 && fst === snd) {
         const start = Math.min(fst, snd);
-        const end = Math.max(fst, snd) - 1;
-        const newhighlight:Highlight = {
-          start,
-          end,
-          selection: selection.toString(),
-          style: 'background: yellow;',
-        };
-        const overlap = overlapingHighlight(newhighlight);
-        
-        if (overlap.length > 0) {
-          overlapHandler(newhighlight, overlap);
-        } else {
-          setHighlights([...highlights, newhighlight]);
+        const end = Math.max(fst, snd);
+        const selected = highlights.find((h) => h.start <= start && h.end >= end);
+        if (selected) {
+          setSelectedHighlight(selected);
+          openOptions(true);
         }
       }
     }
@@ -143,14 +113,48 @@ const HighlatableText = ({
 
   return (
     <div style={style}>
-      <div id={id} className="highlitable-text__overlay">
+      {options && selectedHighlight
+      && (
+      <HighlightOptions
+        highlights={highlights}
+        setHighlights={setHighlights}
+        position={position}
+        setOptions={setOptions}
+        style={optionsStyle}
+        closeIcon={closeIcon}
+        highlightOptions={highlightOptions}
+        title={optionsTitle}
+        selectedHighlight={selectedHighlight}
+      />
+      )}
+      <div
+        id={id}
+        className="highlitable-text__overlay"
+        role="presentation"
+        onClick={clickHandler}
+      >
         {text}
       </div>
       <div
         className="highlitable-text"
         style={{ position: 'absolute' }}
         role="presentation"
-        onMouseUp={mouseOverHandle}
+        onClick={clickHandler}
+        onMouseUp={() => {
+          const open = createHighlight(
+            text,
+            highlightable != null && highlightable,
+            highlights,
+            setHighlights,
+            handleOverlaps,
+            window.getSelection(),
+            setSelectedHighlight,
+            undefined,
+            errors,
+            setErrors,
+          );
+          openOptions(open);
+        }}
       >
         {text}
       </div>
