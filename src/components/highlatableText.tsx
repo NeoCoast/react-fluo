@@ -94,7 +94,7 @@ const HighlatableText = ({
     }
   };
 
-  const clickHandler = () => {
+  const clickHandler = (e: any) => {
     const selection = window.getSelection();
     if (selection) {
       const fst = selection.anchorOffset;
@@ -102,7 +102,8 @@ const HighlatableText = ({
       if (fst >= 0 && snd >= 0 && fst === snd) {
         const start = Math.min(fst, snd);
         const end = Math.max(fst, snd);
-        const selected = highlights.find((h) => h.start <= start && h.end >= end);
+        const selected = highlights.find((h) =>  (h.start <= start && h.end >= end)
+                                                  || e.target.id === h.id.toString());
         if (selected) {
           setSelectedHighlight(selected);
           openOptions(true);
@@ -125,6 +126,7 @@ const HighlatableText = ({
         highlightOptions={highlightOptions}
         title={optionsTitle}
         selectedHighlight={selectedHighlight}
+        setSelectedHighlight={setSelectedHighlight}
       />
       )}
       <div

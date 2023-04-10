@@ -89,6 +89,9 @@ HighlatableTextStory.args = {
     },
     {
       background: '#ff4d5b',
+      position: 'relative',
+      zIndex: '2',
+      color: 'white',
     },
     {
       backgroundImage: 'repeating-linear-gradient(45deg, rgb(42 191 196), rgb(96, 109, 188) 10px, rgb(70, 82, 152) 10px, rgb(70, 82, 152) 20px)',

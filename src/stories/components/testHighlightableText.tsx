@@ -30,18 +30,20 @@ const TestHighlightableText = ({
   const [internalHighlights, setHighlights] = useState<Highlight[]>(highlights);
 
   return (
-    <HighlatableText
-      id={id}
-      text={text}
-      highlights={internalHighlights}
-      setHighlights={setHighlights}
-      style={style}
-      highlightOptions={highlightOptions}
-      highlightable={highlightable}
-      handleOverlaps={handleOverlaps}
-      optionsStyle={optionsStyle}
-      optionsTitle={optionsTitle}
-    />
+    <div>
+      <HighlatableText
+        id={id}
+        text={text}
+        highlights={internalHighlights}
+        setHighlights={setHighlights}
+        style={style}
+        highlightOptions={highlightOptions}
+        highlightable={highlightable}
+        handleOverlaps={handleOverlaps}
+        optionsStyle={optionsStyle}
+        optionsTitle={optionsTitle}
+      />
+    </div>
   );
 };
 

@@ -6,6 +6,8 @@ import styleToString from '../helpers/styleToString';
 
 import '../assets/styles/highlightableOptions.scss';
 import Highlight from '../interfaces/highlight';
+import HighlightComment from './highlightComment';
+import { addComment } from '../helpers/addComments';
 
 interface HighlightOptionsProps {
   highlights: Highlight[],
@@ -14,6 +16,7 @@ interface HighlightOptionsProps {
   highlightOptions: React.CSSProperties[],
   setOptions: (val: boolean) => void,
   selectedHighlight: Highlight,
+  setSelectedHighlight: (val: Highlight) => void,
   title?: string,
   style?: React.CSSProperties,
   closeIcon?: string,
@@ -26,6 +29,7 @@ const HighlightOptions = ({
   highlightOptions,
   setOptions,
   selectedHighlight,
+  setSelectedHighlight,
   title,
   style,
   closeIcon,
@@ -45,7 +49,9 @@ const HighlightOptions = ({
             end: highlight.end,
             selection: highlight.selection,
             style: styleToString(newStyle),
+            comments: highlight.comments,
           };
+          setSelectedHighlight(newHighlight);
           return newHighlight;
         }
         return highlight;
@@ -53,6 +59,20 @@ const HighlightOptions = ({
       return highlight;
     },
   ));
+
+  const newComment = (event: any) => {
+    if (event.keyCode === 13) {
+      addComment({
+        comment: event.target.value,
+        highlights,
+        setHighlights,
+        selectedHighlight,
+        setSelectedHighlight,
+      });
+      // eslint-disable-next-line no-param-reassign
+      event.target.value = '';
+    }
+  };
 
   return (
     <div style={{ top: `${y}px`, left: `${x + 5}px` }} className="highlightable-options">
@@ -104,6 +124,25 @@ const HighlightOptions = ({
               role="presentation"
               onClick={() => replaceStyle(option)}
             />
+          ))}
+        </div>
+        <div>
+          <input
+            type="text"
+            placeholder="Add comment"
+            onKeyUp={(e) => newComment(e)}
+            className="highlightable-options__comment-new"
+          />
+          {selectedHighlight.comments?.map((comment) => (
+            <div key={comment.id} className="highlightable-options__comment">
+              <HighlightComment
+                comment={comment}
+                highlights={highlights}
+                setHighlights={setHighlights}
+                selectedHighlight={selectedHighlight}
+                setSelectedHighlight={setSelectedHighlight}
+              />
+            </div>
           ))}
         </div>
       </div>

@@ -30,6 +30,7 @@ const mergeHighlights = (
     end: Math.max(...ends),
     selection: text.substring(Math.min(...starts), Math.max(...ends)),
     style: selectedHighlight || 'text-decoration: underline; color: black',
+    comments: [],
   };
   setSelectedHighlight(newhighlight);
   setHighlights([...nonOverlapingHighlight(newhighlight, highlights), newhighlight]);
@@ -101,6 +102,7 @@ const createHighlight = (
         end,
         selection: selection.toString(),
         style: selectedHighlight || 'text-decoration: underline; color: black',
+        comments: [],
       };
       const overlap = overlapingHighlight(newhighlight, highlights);
 
