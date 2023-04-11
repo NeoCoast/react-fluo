@@ -12,6 +12,7 @@ export interface TestHighlatableTextProps {
   highlightable: boolean,
   handleOverlaps: HandleOverlap,
   highlightOptions: React.CSSProperties[],
+  defaultHighlight?: number,
   optionsTitle?: string,
   optionsStyle?: React.CSSProperties,
 }
@@ -24,6 +25,7 @@ const TestHighlightableText = ({
   highlightable,
   handleOverlaps,
   highlightOptions,
+  defaultHighlight,
   optionsTitle,
   optionsStyle,
 }:TestHighlatableTextProps) => {
@@ -40,6 +42,7 @@ const TestHighlightableText = ({
         highlightOptions={highlightOptions}
         highlightable={highlightable}
         handleOverlaps={handleOverlaps}
+        defaultHighlight={defaultHighlight}
         optionsStyle={optionsStyle}
         optionsTitle={optionsTitle}
       />
