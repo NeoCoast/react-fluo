@@ -1,4 +1,6 @@
+/* eslint-disable no-plusplus */
 import Highlight from '../interfaces/highlight';
+import getSelection from './getSelection';
 
 export enum HandleOverlap {
   Merge,
@@ -82,53 +84,53 @@ const createHighlight = (
   highlights: Highlight[],
   setHighlights:(val: Highlight[])=>void,
   handleOverlaps: HandleOverlap,
-  selection: any,
   setSelectedHighlight: (val: Highlight) => void,
   selectedHighlight: Highlight | undefined,
   defaultHighlight: string,
+  setNewHighlight: (val: boolean) => void,
   errors?: string[],
   setErrors?: (val: string[]) => void,
 ) => {
-  if (selection) {
-    const fst = selection.anchorOffset;
-    const snd = selection.focusOffset;
-    if (highlightable && fst >= 0 && snd >= 0 && fst !== snd) {
-      const start = Math.min(fst, snd);
-      const end = Math.max(fst, snd) - 1;
-      let currentLargest = 0;
-      if (highlights.length > 0) {
-        currentLargest = Math.max(...highlights.map((h) => h.id));
-      }
-      const id = currentLargest + 1;
-      const newhighlight:Highlight = {
-        id,
-        start,
-        end,
-        selection: selection.toString(),
-        style: defaultHighlight,
-        comments: [],
-      };
-      const overlap = overlapingHighlight(newhighlight, highlights);
-
-      if (overlap.length > 0) {
-        return overlapHandler(
-          text,
-          newhighlight,
-          overlap,
-          highlights,
-          setHighlights,
-          handleOverlaps,
-          setSelectedHighlight,
-          selectedHighlight,
-          defaultHighlight,
-          errors,
-          setErrors,
-        );
-      }
-      setSelectedHighlight(newhighlight);
-      setHighlights([...highlights, newhighlight]);
-      return true;
+  const {
+    start,
+    end,
+    selection,
+    valid,
+  } = getSelection();
+  if (highlightable && valid && start !== end) {
+    setNewHighlight(true);
+    let currentLargest = 0;
+    if (highlights.length > 0) {
+      currentLargest = Math.max(...highlights.map((h) => h.id));
     }
+    const id = currentLargest + 1;
+    const newhighlight:Highlight = {
+      id,
+      start,
+      end: end - 1,
+      selection,
+      style: defaultHighlight,
+      comments: [],
+    };
+    const overlap = overlapingHighlight(newhighlight, highlights);
+    if (overlap.length > 0) {
+      return overlapHandler(
+        text,
+        newhighlight,
+        overlap,
+        highlights,
+        setHighlights,
+        handleOverlaps,
+        setSelectedHighlight,
+        selectedHighlight,
+        defaultHighlight,
+        errors,
+        setErrors,
+      );
+    }
+    setSelectedHighlight(newhighlight);
+    setHighlights([...highlights, newhighlight]);
+    return true;
   }
   return false;
 };
