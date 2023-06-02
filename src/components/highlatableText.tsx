@@ -18,9 +18,12 @@ export interface HighlatableTextProps {
   style?: React.CSSProperties,
   handleOverlaps: HandleOverlap,
   highlightOptions: React.CSSProperties[],
+  defaultHighlight?: number,
   optionsTitle?: string,
   optionsStyle?: React.CSSProperties,
   closeIcon?: string,
+  replyIcon?: string,
+  showOptionsIcon?: string,
   errors?: string[],
   setErrors?: (val: string[]) => void,
 }
@@ -34,15 +37,21 @@ const HighlatableText = ({
   style,
   handleOverlaps,
   highlightOptions,
+  defaultHighlight,
   optionsTitle,
   optionsStyle,
   closeIcon,
+  replyIcon,
+  showOptionsIcon,
   errors,
   setErrors,
 }: HighlatableTextProps) => {
   const [options, setOptions] = useState<boolean>(false);
+  const [showStyle, setShowStyle] = useState<boolean>(false);
   const [position, setPosition] = useState<Coord>({ x:0, y: 0 });
   const [selectedHighlight, setSelectedHighlight] = useState<Highlight>();
+
+  const defaultStyle = defaultHighlight ? styleToString(highlightOptions[defaultHighlight]) : 'text-decoration: underline; color: black';
 
   const drawHighlight = (
     spanId: number,
@@ -94,7 +103,7 @@ const HighlatableText = ({
     }
   };
 
-  const clickHandler = () => {
+  const clickHandler = (e: any) => {
     const selection = window.getSelection();
     if (selection) {
       const fst = selection.anchorOffset;
@@ -102,9 +111,11 @@ const HighlatableText = ({
       if (fst >= 0 && snd >= 0 && fst === snd) {
         const start = Math.min(fst, snd);
         const end = Math.max(fst, snd);
-        const selected = highlights.find((h) => h.start <= start && h.end >= end);
+        const selected = highlights.find((h) =>  (h.start <= start && h.end >= end)
+                                                  || e.target.id === h.id.toString());
         if (selected) {
           setSelectedHighlight(selected);
+          setShowStyle(false);
           openOptions(true);
         }
       }
@@ -121,10 +132,15 @@ const HighlatableText = ({
         position={position}
         setOptions={setOptions}
         style={optionsStyle}
+        showStyle={showStyle}
+        setShowStyle={setShowStyle}
         closeIcon={closeIcon}
         highlightOptions={highlightOptions}
         title={optionsTitle}
         selectedHighlight={selectedHighlight}
+        setSelectedHighlight={setSelectedHighlight}
+        replyIcon={replyIcon}
+        showOptionsIcon={showOptionsIcon}
       />
       )}
       <div
@@ -150,9 +166,11 @@ const HighlatableText = ({
             window.getSelection(),
             setSelectedHighlight,
             undefined,
+            defaultStyle,
             errors,
             setErrors,
           );
+          setShowStyle(open);
           openOptions(open);
         }}
       >

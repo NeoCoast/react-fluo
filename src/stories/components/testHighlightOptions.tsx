@@ -23,18 +23,24 @@ const TestHighlightOptions = ({
     end: 0,
     selection: '',
     style: '',
+    comments: [],
   };
+  const [showStyle, setShowStyle] = useState<boolean>(false);
+  const [selectedHighlight, setSelectedHighlight] = useState<Highlight>(highlight);
   return (
     <HighlightOptions
       highlights={highlights}
       setHighlights={setHighlights}
       position={{ x: 100, y: 0 }}
       setOptions={() => undefined}
-      selectedHighlight={highlight}
+      selectedHighlight={selectedHighlight}
+      showStyle={showStyle}
+      setShowStyle={setShowStyle}
       highlightOptions={highlightOptions}
       title={title}
       style={style}
       closeIcon={closeIcon}
+      setSelectedHighlight={setSelectedHighlight}
     />
   );
 };

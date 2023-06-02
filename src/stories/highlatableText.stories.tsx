@@ -34,6 +34,10 @@ export default {
       description: 'Styles that can be used for highlights',
       control: { type: 'object' },
     },
+    defaultHighlight: {
+      description: 'Determines which style is used by default for new highlights',
+      control: { type: 'number' },
+    },
     highlightable: {
       description: 'Determines whether highlighting is available',
       control: { type: 'boolean' },
@@ -89,6 +93,9 @@ HighlatableTextStory.args = {
     },
     {
       background: '#ff4d5b',
+      position: 'relative',
+      zIndex: '2',
+      color: 'white',
     },
     {
       backgroundImage: 'repeating-linear-gradient(45deg, rgb(42 191 196), rgb(96, 109, 188) 10px, rgb(70, 82, 152) 10px, rgb(70, 82, 152) 20px)',
@@ -113,6 +120,7 @@ HighlatableTextStory.args = {
   ],
   highlightable: true,
   handleOverlaps: HandleOverlap.Merge,
-  optionsTitle: 'Select highlight',
+  optionsTitle: 'Highlight Options',
   optionsStyle: {},
+  defaultHighlight: 0,
 };
