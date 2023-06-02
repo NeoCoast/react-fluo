@@ -20,7 +20,8 @@ const mergeHighlights = (
   setHighlights:(val: Highlight[])=>void,
   highlights: Highlight[],
   setSelectedHighlight: (val: Highlight) => void,
-  selectedHighlight?: string,
+  selectedHighlight: Highlight | undefined,
+  defaultHighlight: string,
 ) => {
   const starts = overlaps.map((overlap) => overlap.start);
   const ends = overlaps.map((overlap) => overlap.end);
@@ -29,7 +30,7 @@ const mergeHighlights = (
     start: Math.min(...starts),
     end: Math.max(...ends),
     selection: text.substring(Math.min(...starts), Math.max(...ends)),
-    style: selectedHighlight || 'text-decoration: underline; color: black',
+    style: selectedHighlight?.style || defaultHighlight,
     comments: [],
   };
   setSelectedHighlight(newhighlight);
@@ -44,7 +45,8 @@ const overlapHandler = (
   setHighlights:(val: Highlight[])=>void,
   handleOverlaps: HandleOverlap,
   setSelectedHighlight: (val: Highlight) => void,
-  selectedHighlight?: string,
+  selectedHighlight: Highlight | undefined,
+  defaultHighlight: string,
   errors?: string[],
   setErrors?: (val: string[]) => void,
 ) => {
@@ -57,6 +59,7 @@ const overlapHandler = (
         highlights,
         setSelectedHighlight,
         selectedHighlight,
+        defaultHighlight,
       );
       return true;
     case HandleOverlap.Delete:
@@ -81,7 +84,8 @@ const createHighlight = (
   handleOverlaps: HandleOverlap,
   selection: any,
   setSelectedHighlight: (val: Highlight) => void,
-  selectedHighlight?: string,
+  selectedHighlight: Highlight | undefined,
+  defaultHighlight: string,
   errors?: string[],
   setErrors?: (val: string[]) => void,
 ) => {
@@ -101,7 +105,7 @@ const createHighlight = (
         start,
         end,
         selection: selection.toString(),
-        style: selectedHighlight || 'text-decoration: underline; color: black',
+        style: defaultHighlight,
         comments: [],
       };
       const overlap = overlapingHighlight(newhighlight, highlights);
@@ -116,6 +120,7 @@ const createHighlight = (
           handleOverlaps,
           setSelectedHighlight,
           selectedHighlight,
+          defaultHighlight,
           errors,
           setErrors,
         );

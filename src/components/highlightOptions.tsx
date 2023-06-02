@@ -1,6 +1,7 @@
 import { Coord } from '../helpers/getHighlightPosition';
 
 import cross from '../assets/images/cross.svg';
+import colorWheel from '../assets/images/color-wheel.svg';
 
 import styleToString from '../helpers/styleToString';
 
@@ -15,11 +16,15 @@ interface HighlightOptionsProps {
   position: Coord,
   highlightOptions: React.CSSProperties[],
   setOptions: (val: boolean) => void,
+  showStyle: boolean,
+  setShowStyle: (val: boolean) => void,
   selectedHighlight: Highlight,
   setSelectedHighlight: (val: Highlight) => void,
   title?: string,
   style?: React.CSSProperties,
   closeIcon?: string,
+  replyIcon?: string,
+  showOptionsIcon?: string,
 }
 
 const HighlightOptions = ({
@@ -28,11 +33,15 @@ const HighlightOptions = ({
   position,
   highlightOptions,
   setOptions,
+  showStyle,
+  setShowStyle,
   selectedHighlight,
   setSelectedHighlight,
   title,
   style,
   closeIcon,
+  replyIcon,
+  showOptionsIcon,
 }: HighlightOptionsProps) => {
   const { x, y } = position;
 
@@ -90,49 +99,62 @@ const HighlightOptions = ({
             />
           </button>
         </div>
-        <div className="highlightable-options__items">
-          <div
-            style={{ textDecoration: 'underline', color: 'black' }}
-            className="highlightable-options__item"
-            role="presentation"
-            onClick={() => replaceStyle({ textDecoration: 'underline', color: 'black' })}
-          >
-            U
-          </div>
-          <div
-            className="highlightable-options__delete"
-            role="presentation"
-            onClick={() => {
-              setHighlights(highlights.filter((h) => h.id !== selectedHighlight.id));
-              setOptions(false);
-            }}
-          >
-            <img
-              src={cross}
-              style={{ width: '20px', height: '20px' }}
-              alt="Close Modal"
-              role="presentation"
-              onClick={() => setOptions(false)}
-              className="table__header--icon"
-            />
-          </div>
-          {highlightOptions.map((option) => (
+        {showStyle && (
+          <div className="highlightable-options__items">
             <div
-              key={styleToString(option)}
-              style={option}
+              style={{ textDecoration: 'underline', color: 'black' }}
               className="highlightable-options__item"
               role="presentation"
-              onClick={() => replaceStyle(option)}
-            />
-          ))}
-        </div>
+              onClick={() => replaceStyle({ textDecoration: 'underline', color: 'black' })}
+            >
+              U
+            </div>
+            <div
+              className="highlightable-options__delete"
+              role="presentation"
+              onClick={() => {
+                setHighlights(highlights.filter((h) => h.id !== selectedHighlight.id));
+                setOptions(false);
+              }}
+            >
+              <img
+                src={cross}
+                style={{ width: '20px', height: '20px' }}
+                alt="Close Modal"
+                role="presentation"
+                onClick={() => setOptions(false)}
+                className="table__header--icon"
+              />
+            </div>
+            {highlightOptions.map((option) => (
+              <div
+                key={styleToString(option)}
+                style={option}
+                className="highlightable-options__item"
+                role="presentation"
+                onClick={() => replaceStyle(option)}
+              />
+            ))}
+          </div>
+        )}
         <div>
-          <input
-            type="text"
-            placeholder="Add comment"
-            onKeyUp={(e) => newComment(e)}
-            className="highlightable-options__comment-new"
-          />
+          <div className="highlightable-options__row">
+            {!showStyle && (
+            <img
+              src={showOptionsIcon || colorWheel}
+              alt="Close Modal"
+              role="presentation"
+              onClick={() => setShowStyle(true)}
+              className="highlightable-options__icon"
+            />
+            )}
+            <input
+              type="text"
+              placeholder="Add comment"
+              onKeyUp={(e) => newComment(e)}
+              className="highlightable-options__comment-new"
+            />
+          </div>
           {selectedHighlight.comments?.map((comment) => (
             <div key={comment.id} className="highlightable-options__comment">
               <HighlightComment
@@ -141,6 +163,7 @@ const HighlightOptions = ({
                 setHighlights={setHighlights}
                 selectedHighlight={selectedHighlight}
                 setSelectedHighlight={setSelectedHighlight}
+                replyIcon={replyIcon}
               />
             </div>
           ))}
