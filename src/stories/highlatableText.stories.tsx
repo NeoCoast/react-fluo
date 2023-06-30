@@ -42,6 +42,10 @@ export default {
       description: 'Determines whether highlighting is available',
       control: { type: 'boolean' },
     },
+    editable: {
+      description: 'Determines whether the text can be edited',
+      control: { type: 'boolean' },
+    },
     handleOverlaps: {
       description: 'Determines how overlapping highlights are handled.',
       options: [HandleOverlap.Merge, HandleOverlap.Delete],
@@ -119,6 +123,7 @@ HighlatableTextStory.args = {
     },
   ],
   highlightable: true,
+  editable: true,
   handleOverlaps: HandleOverlap.Merge,
   optionsTitle: 'Highlight Options',
   optionsStyle: {},

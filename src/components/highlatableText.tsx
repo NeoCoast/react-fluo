@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from 'react';
 
 import HighlightOptions from './highlightOptions';
+
 import Highlight from '../interfaces/highlight';
+import Selection from '../interfaces/selection';
 
 import styleToString from '../helpers/styleToString';
 import getHighlightPosition, { Coord } from '../helpers/getHighlightPosition';
 import createHighlight, { HandleOverlap } from '../helpers/createHighlight';
+import editHighlightedText from '../helpers/editHighlightedText';
+import getSelection from '../helpers/getSelection';
+import setCarretPosition from '../helpers/setCarretPosition';
 
 import '../assets/styles/highlightableText.scss';
+import replaceEnters from '../helpers/replaceEnters';
 
 export interface HighlatableTextProps {
   id: string,
   text: string,
+  setText: (val: string) => void,
   highlights: Highlight[],
   setHighlights: (val: Highlight[]) => void,
   highlightable?: boolean,
+  editable: boolean,
   style?: React.CSSProperties,
   handleOverlaps: HandleOverlap,
   highlightOptions: React.CSSProperties[],
@@ -31,9 +39,11 @@ export interface HighlatableTextProps {
 const HighlatableText = ({
   id,
   text,
+  setText,
   highlights,
   setHighlights,
   highlightable,
+  editable,
   style,
   handleOverlaps,
   highlightOptions,
@@ -50,6 +60,15 @@ const HighlatableText = ({
   const [showStyle, setShowStyle] = useState<boolean>(false);
   const [position, setPosition] = useState<Coord>({ x:0, y: 0 });
   const [selectedHighlight, setSelectedHighlight] = useState<Highlight>();
+  const [prevText, setPrevText] = useState<string>('');
+  const [currCarretPosition, setCurrCarretPosition] = useState<number>(0);
+  const [newHighlight, setNewHighlight] = useState<boolean>();
+  const [currSelection, setCurrSelection] = useState<Selection>({
+    start: 0,
+    end: 0,
+    selection: '',
+    valid: false,
+  });
 
   const defaultStyle = defaultHighlight ? styleToString(highlightOptions[defaultHighlight]) : 'text-decoration: underline; color: black';
 
@@ -78,9 +97,11 @@ const HighlatableText = ({
 
   useEffect(() => {
     const element = document.getElementById(id);
-    if (element) {
+    const editableElement = document.getElementById(`editable_${id}`);
+    if (element && editableElement) {
+      setCarretPosition(editableElement, currCarretPosition);
       let lenghtDifference = 0;
-      element.innerHTML = text;
+      element.innerHTML = editableElement.innerHTML;
       highlights.sort((prev, next) => prev.start - next.start).forEach(
         (highlight) => {
           lenghtDifference += drawHighlight(
@@ -93,7 +114,7 @@ const HighlatableText = ({
         },
       );
     }
-  }, [highlights]);
+  }, [highlights, text]);
 
   const openOptions = (open: boolean) => {
     const coords = getHighlightPosition(false);
@@ -104,26 +125,52 @@ const HighlatableText = ({
   };
 
   const clickHandler = (e: any) => {
-    const selection = window.getSelection();
-    if (selection) {
-      const fst = selection.anchorOffset;
-      const snd = selection.focusOffset;
-      if (fst >= 0 && snd >= 0 && fst === snd) {
-        const start = Math.min(fst, snd);
-        const end = Math.max(fst, snd);
-        const selected = highlights.find((h) =>  (h.start <= start && h.end >= end)
+    setNewHighlight(false);
+    const { start, end } = getSelection();
+    const selected = highlights.find((h) =>  (h.start <= start && h.end >= end)
                                                   || e.target.id === h.id.toString());
-        if (selected) {
-          setSelectedHighlight(selected);
-          setShowStyle(false);
-          openOptions(true);
-        }
-      }
+
+    if (selected && !newHighlight) {
+      setSelectedHighlight(selected);
+      setShowStyle(false);
+      openOptions(true);
     }
   };
 
+  const onKeyUp = (e: any) => {
+    const selection = getSelection();
+    const element = document.getElementById(`editable_${id}`);
+    if (element) {
+      setText(replaceEnters(element.innerHTML));
+    }
+
+    editHighlightedText({
+      prevText,
+      newText: e.target.textContent,
+      highlights,
+      setHighlights,
+      selection: (selection.selection.length > currSelection.selection.length)
+        ? selection : currSelection,
+      isEnter: e.which === 13,
+    });
+    setCurrSelection(selection);
+    setCurrCarretPosition(e.which === 13 ? currCarretPosition + 1 : selection.end);
+  };
+
+  const onKeyDown = (e: any) => {
+    const selection = getSelection();
+    const element = document.getElementById(`editable_${id}`);
+    if (element) {
+      setText(replaceEnters(element.innerHTML));
+    }
+    setCurrSelection(selection);
+    setPrevText(e.target.textContent);
+    setOptions(false);
+    setCurrCarretPosition(selection.end);
+  };
+
   return (
-    <div style={style}>
+    <div style={style} className="highlitable-text__container">
       {options && selectedHighlight
       && (
       <HighlightOptions
@@ -145,37 +192,45 @@ const HighlatableText = ({
       )}
       <div
         id={id}
+        dangerouslySetInnerHTML={{ __html: text }}
         className="highlitable-text__overlay"
         role="presentation"
         onClick={clickHandler}
-      >
-        {text}
-      </div>
+      />
       <div
+        id={`editable_${id}`}
+        dangerouslySetInnerHTML={{ __html: text }}
+        contentEditable={editable}
         className="highlitable-text"
         style={{ position: 'absolute' }}
+        onKeyDown={(e) => onKeyDown(e)}
+        onKeyUp={(e) => onKeyUp(e)}
         role="presentation"
+        suppressContentEditableWarning
         onClick={clickHandler}
-        onMouseUp={() => {
-          const open = createHighlight(
-            text,
-            highlightable != null && highlightable,
-            highlights,
-            setHighlights,
-            handleOverlaps,
-            window.getSelection(),
-            setSelectedHighlight,
-            undefined,
-            defaultStyle,
-            errors,
-            setErrors,
-          );
-          setShowStyle(open);
-          openOptions(open);
+        onMouseUp={(e) => {
+          const selection = getSelection();
+          const element:any = e.target;
+          if (element && element.textContent) {
+            const open = createHighlight(
+              element.textContent,
+              highlightable != null && highlightable,
+              highlights,
+              setHighlights,
+              handleOverlaps,
+              setSelectedHighlight,
+              undefined,
+              defaultStyle,
+              setNewHighlight,
+              errors,
+              setErrors,
+            );
+            setCurrSelection(selection);
+            setShowStyle(open);
+            openOptions(open);
+          }
         }}
-      >
-        {text}
-      </div>
+      />
     </div>
   );
 };

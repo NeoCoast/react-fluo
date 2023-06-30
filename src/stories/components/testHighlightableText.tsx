@@ -10,6 +10,7 @@ export interface TestHighlatableTextProps {
   highlights: Highlight[],
   style: React.CSSProperties,
   highlightable: boolean,
+  editable: boolean,
   handleOverlaps: HandleOverlap,
   highlightOptions: React.CSSProperties[],
   defaultHighlight?: number,
@@ -23,6 +24,7 @@ const TestHighlightableText = ({
   highlights,
   style,
   highlightable,
+  editable,
   handleOverlaps,
   highlightOptions,
   defaultHighlight,
@@ -30,17 +32,20 @@ const TestHighlightableText = ({
   optionsStyle,
 }:TestHighlatableTextProps) => {
   const [internalHighlights, setHighlights] = useState<Highlight[]>(highlights);
+  const [editableText, setEditableText] = useState<string>(text);
 
   return (
     <div>
       <HighlatableText
         id={id}
-        text={text}
+        text={editableText}
+        setText={setEditableText}
         highlights={internalHighlights}
         setHighlights={setHighlights}
         style={style}
         highlightOptions={highlightOptions}
         highlightable={highlightable}
+        editable={editable}
         handleOverlaps={handleOverlaps}
         defaultHighlight={defaultHighlight}
         optionsStyle={optionsStyle}

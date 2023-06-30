@@ -1,8 +1,24 @@
 .highlitable-text {
   position: absolute;
+  margin-top: 20px;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word;
 
   &__overlay {
     position: absolute;
     color: transparent;
+    margin-top: 20px;
+    white-space: pre-wrap;
+    white-space: -moz-pre-wrap;
+    white-space: -pre-wrap;
+    white-space: -o-pre-wrap;
+    word-wrap: break-word;
+  }
+
+  &__container {
+    position: relative;
   }
 }
