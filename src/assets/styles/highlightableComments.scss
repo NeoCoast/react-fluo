@@ -5,14 +5,28 @@
   align-items: flex-start;
   
   &__author {
-    margin-left: 15px;
+    display: flex;
+    align-items: center;
+
+    &-name {
+      margin-left: 5px;
+      white-space: nowrap;
+    }
+
+    &-avatar {
+      width: 25px;
+      border-radius: 50px;
+    }
   }
 
   &__date {
     margin-left: 20px;
     color: #969696;
-    width: 100%;
     margin: 5px 0 10px 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
   
   &__text {
@@ -54,6 +68,18 @@
 
     &-author {
       margin: 0;
+      display: flex;
+      align-items: center;
+
+      &-name {
+        margin-left: 5px;
+        white-space: nowrap;
+      }
+
+      &-avatar {
+        width: 25px;
+        border-radius: 50px;
+      }
     }
 
     &-text {

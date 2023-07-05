@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import HighlatableText from '../../components/highlatableText';
-import Highlight from '../../interfaces/highlight';
+import Highlight, { Author } from '../../interfaces/highlight';
 import { HandleOverlap } from '../../helpers/createHighlight';
 
 export interface TestHighlatableTextProps {
@@ -16,6 +16,7 @@ export interface TestHighlatableTextProps {
   defaultHighlight?: number,
   optionsTitle?: string,
   optionsStyle?: React.CSSProperties,
+  currentAuthor?: Author,
 }
 
 const TestHighlightableText = ({
@@ -30,6 +31,7 @@ const TestHighlightableText = ({
   defaultHighlight,
   optionsTitle,
   optionsStyle,
+  currentAuthor,
 }:TestHighlatableTextProps) => {
   const [internalHighlights, setHighlights] = useState<Highlight[]>(highlights);
   const [editableText, setEditableText] = useState<string>(text);
@@ -50,6 +52,7 @@ const TestHighlightableText = ({
         defaultHighlight={defaultHighlight}
         optionsStyle={optionsStyle}
         optionsTitle={optionsTitle}
+        currentAuthor={currentAuthor}
       />
     </div>
   );

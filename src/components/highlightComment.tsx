@@ -3,7 +3,7 @@ import format from 'date-fns/format';
 
 import replyDefault from '../assets/images/reply.svg';
 
-import Highlight, { Comment } from '../interfaces/highlight';
+import Highlight, { Comment, Author } from '../interfaces/highlight';
 
 import { addReply } from '../helpers/addComments';
 
@@ -16,6 +16,7 @@ interface HighloghtCommentProps {
   selectedHighlight: Highlight,
   setSelectedHighlight: (val: Highlight) => void,
   replyIcon?: string,
+  currentAuthor?: Author,
 }
 
 const HighlightComment = ({
@@ -25,6 +26,7 @@ const HighlightComment = ({
   selectedHighlight,
   setSelectedHighlight,
   replyIcon,
+  currentAuthor,
 }:HighloghtCommentProps) => {
   const toggleReplyInput = () => {
     const replyInput = document.getElementById(`reply-input-${comment.id}`);
@@ -42,6 +44,7 @@ const HighlightComment = ({
         setHighlights,
         selectedHighlight,
         setSelectedHighlight,
+        author: currentAuthor,
       });
       toggleReplyInput();
       // eslint-disable-next-line no-param-reassign
@@ -51,10 +54,19 @@ const HighlightComment = ({
 
   return (
     <div key={comment.id} className="highlitable-comments">
-      {comment.author && <p className="highlitable-comments__author">{comment.author}</p>}
-      <p className="highlitable-comments__date">
-        {format(comment.date, 'dd/MM/yyyy')}
-      </p>
+      <div className="highlitable-comments__text-row">
+        {comment.author
+        && (
+        <div className="highlitable-comments__author">
+          {comment.author.avatar
+          && <img src={comment.author.avatar} alt="Author avatar" className="highlitable-comments__author-avatar" />}
+          <p className="highlitable-comments__author-name">{comment.author.name}</p>
+        </div>
+        )}
+        <p className="highlitable-comments__date">
+          {format(comment.date, 'dd/MM/yyyy')}
+        </p>
+      </div>
       <div className="highlitable-comments__text-row">
         <p className="highlitable-comments__text">
           {comment.text}
@@ -72,7 +84,14 @@ const HighlightComment = ({
       <div className="highlitable-comments__replies">
         {comment.replies.map((reply) => (
           <div key={reply.text} className="highlitable-comments__reply">
-            <p className="highlitable-comments__reply-author">{reply.author}</p>
+            {reply.author
+            && (
+            <div className="highlitable-comments__reply-author">
+              {reply.author.avatar
+              && <img src={reply.author.avatar} alt="Author avatar" className="highlitable-comments__reply-author-avatar" />}
+              <p className="highlitable-comments__reply-author-name">{reply.author.name}</p>
+            </div>
+            )}
             <p className="highlitable-comments__reply-text">{reply.text}</p>
           </div>
         ))}

@@ -23,6 +23,10 @@ export default {
       description: 'Style for the optoins popup',
       control: { type: 'object' },
     },
+    currentAuthor: {
+      description: 'Author of the current highlight',
+      control: { type: 'object' },
+    },
   },
 } as ComponentMeta<typeof TestHighlightOptions>;
 
@@ -77,5 +81,9 @@ HighlightOptionsStory.args = {
   ],
   title: 'Enter you title here',
   style: {},
+  currentAuthor: {
+    name: 'John Doe',
+    avatar: 'https://img.icons8.com/fluency-systems-regular/2x/user.png',
+  },
   closeIcon: 'https://img.icons8.com/fluency-systems-regular/2x/multiply.png',
 };

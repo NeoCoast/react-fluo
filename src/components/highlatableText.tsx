@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import HighlightOptions from './highlightOptions';
 
-import Highlight from '../interfaces/highlight';
+import Highlight, { Author } from '../interfaces/highlight';
 import Selection from '../interfaces/selection';
 
 import styleToString from '../helpers/styleToString';
@@ -18,14 +18,14 @@ import replaceEnters from '../helpers/replaceEnters';
 export interface HighlatableTextProps {
   id: string,
   text: string,
-  setText: (val: string) => void,
+  setText?: (val: string) => void,
   highlights: Highlight[],
   setHighlights: (val: Highlight[]) => void,
-  highlightable?: boolean,
-  editable: boolean,
-  style?: React.CSSProperties,
-  handleOverlaps: HandleOverlap,
   highlightOptions: React.CSSProperties[],
+  highlightable?: boolean,
+  editable?: boolean,
+  style?: React.CSSProperties,
+  handleOverlaps?: HandleOverlap,
   defaultHighlight?: number,
   optionsTitle?: string,
   optionsStyle?: React.CSSProperties,
@@ -34,18 +34,19 @@ export interface HighlatableTextProps {
   showOptionsIcon?: string,
   errors?: string[],
   setErrors?: (val: string[]) => void,
+  currentAuthor?: Author,
 }
 
 const HighlatableText = ({
   id,
   text,
-  setText,
+  setText = () => {},
   highlights,
   setHighlights,
   highlightable,
   editable,
   style,
-  handleOverlaps,
+  handleOverlaps = HandleOverlap.Merge,
   highlightOptions,
   defaultHighlight,
   optionsTitle,
@@ -55,6 +56,7 @@ const HighlatableText = ({
   showOptionsIcon,
   errors,
   setErrors,
+  currentAuthor,
 }: HighlatableTextProps) => {
   const [options, setOptions] = useState<boolean>(false);
   const [showStyle, setShowStyle] = useState<boolean>(false);
@@ -188,6 +190,7 @@ const HighlatableText = ({
         setSelectedHighlight={setSelectedHighlight}
         replyIcon={replyIcon}
         showOptionsIcon={showOptionsIcon}
+        currentAuthor={currentAuthor}
       />
       )}
       <div
