@@ -6,7 +6,7 @@ import colorWheel from '../assets/images/color-wheel.svg';
 import styleToString from '../helpers/styleToString';
 
 import '../assets/styles/highlightableOptions.scss';
-import Highlight from '../interfaces/highlight';
+import Highlight, { Author } from '../interfaces/highlight';
 import HighlightComment from './highlightComment';
 import { addComment } from '../helpers/addComments';
 
@@ -25,6 +25,7 @@ interface HighlightOptionsProps {
   closeIcon?: string,
   replyIcon?: string,
   showOptionsIcon?: string,
+  currentAuthor?: Author,
 }
 
 const HighlightOptions = ({
@@ -42,6 +43,7 @@ const HighlightOptions = ({
   closeIcon,
   replyIcon,
   showOptionsIcon,
+  currentAuthor,
 }: HighlightOptionsProps) => {
   const { x, y } = position;
 
@@ -77,6 +79,7 @@ const HighlightOptions = ({
         setHighlights,
         selectedHighlight,
         setSelectedHighlight,
+        author: currentAuthor,
       });
       // eslint-disable-next-line no-param-reassign
       event.target.value = '';
@@ -164,6 +167,7 @@ const HighlightOptions = ({
                 selectedHighlight={selectedHighlight}
                 setSelectedHighlight={setSelectedHighlight}
                 replyIcon={replyIcon}
+                currentAuthor={currentAuthor}
               />
             </div>
           ))}

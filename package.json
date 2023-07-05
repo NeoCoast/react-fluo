@@ -1,5 +1,5 @@
 {
-  "name": "react-sharpie",
+  "name": "react-fluo",
   "private": true,
   "version": "1.0.0",
   "description": "A react library that can be used to highlight and comment parts of a given text. The highlits and comments are both configurable in order to blend with the user's design and needs",

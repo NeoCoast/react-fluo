@@ -63,6 +63,10 @@ export default {
       description: 'Style for the options popup',
       control: { type: 'object' },
     },
+    currentAuthor: {
+      description: 'Author of the current highlight',
+      control: { type: 'object' },
+    },
   },
 } as ComponentMeta<typeof TestHighlightableText>;
 
@@ -122,6 +126,10 @@ HighlatableTextStory.args = {
       backgroundColor: '#fff',
     },
   ],
+  currentAuthor: {
+    name: 'John Doe',
+    avatar: 'https://img.icons8.com/fluency-systems-regular/2x/user.png',
+  },
   highlightable: true,
   editable: true,
   handleOverlaps: HandleOverlap.Merge,
