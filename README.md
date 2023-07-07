@@ -12,7 +12,7 @@ or
 
 ### Demo
 
-A demo in storybook can be found.
+A demo in storybook can be found [here](https://64a82a93a7c5d6b4ac6ee99b-sswaniehjy.chromatic.com).
 
 ### Usage
 
