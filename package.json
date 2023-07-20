@@ -48,7 +48,7 @@
     "react-dom": "^17.0.2"
   },
   "scripts": {
-    "build": "build-storybook",
+    "build": "tsc",
     "lint": "eslint --fix . && npx stylelint --fix **/*.scss",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
