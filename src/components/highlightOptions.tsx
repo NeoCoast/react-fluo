@@ -1,3 +1,5 @@
+import React from 'react';
+
 import { Coord } from '../helpers/getHighlightPosition';
 
 import cross from '../assets/images/cross.svg';

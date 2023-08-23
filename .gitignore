@@ -1,5 +1,7 @@
 package-lock.json
 node_modules
+dist
 
 # Ignore DS_stores
 **/.DS_Store
+

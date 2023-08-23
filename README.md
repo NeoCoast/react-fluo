@@ -20,7 +20,7 @@ A basic use case for the library would be as follows:
 
 ```
 import React, { useState } from 'react';
-import HighlightableText from react-fluo
+import HighlightableText from 'react-fluo';
 
 const ExampleText = ({text}) => {
   const [text, setText] = useState('Lorem Ipsum')
@@ -42,16 +42,16 @@ const ExampleText = ({text}) => {
   <div>
     <HighlightableText
       id='example_id'
-      text
-      setText
-      highlights
-      setHighlights
-      highlightOptions
+      text={text}
+      setText={setText}
+      highlights={highlights}
+      setHighlights={setHighlights}
+      highlightOptions={highlightOptions}
     />
   </div>
 )}
 
-export default HighlightableText
+export default ExampleText
 
 ```
 
