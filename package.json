@@ -1,6 +1,6 @@
 {
   "name": "react-fluo",
-  "version": "1.0.16",
+  "version": "2.0.0",
   "description": "A react library that can be used to highlight and comment parts of a given text. The highlights and comments are both configurable to blend with the user's design and needs",
   "author": {
     "name": "Neocoast"
